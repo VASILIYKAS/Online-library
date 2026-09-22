@@ -1,6 +1,6 @@
 import json
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from livereload import Server
 
 
 def render_books_page(books_file='meta_data.json', template_name='base.html'):
@@ -27,12 +27,20 @@ def main():
     with open('index.html', 'w', encoding="utf8") as file:
         file.write(page)
 
-    print('Сервер запущен и доступен по адресу: http://127.0.0.1:8000')
-    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    server = Server()
+
+    server.watch('base.html')
+
+    def on_reload():
+        page = render_books_page()
+        with open('index.html', 'w', encoding="utf8") as file:
+            file.write(page)
+
+    server.watch('base.html', on_reload)
+
     try:
-        server.serve_forever()
+        server.serve(port=5500, root='.')
     except KeyboardInterrupt:
-        print('Сервер остановлен.')
         server.server_close()
 
 
