@@ -1,5 +1,6 @@
 import json
 import os
+import math
 
 from urllib.parse import quote
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -7,9 +8,15 @@ from livereload import Server
 from more_itertools import chunked
 
 
+
 def make_slug(book_path):
     name = os.path.splitext(os.path.basename(book_path))[0]
     return name.split('-', 1)[0]
+
+
+def split_columns(books):
+    half = (len(books) + 1) // 2
+    return books[:half], books[half:]
 
 
 def render_books_page(books_file='meta_data.json', template_name='base.html', books_per_page=10):
@@ -17,8 +24,8 @@ def render_books_page(books_file='meta_data.json', template_name='base.html', bo
         books = json.load(file)
 
     for book in books:
-        encoded_path = quote(book['book_path'], safe='/')
-        book['read_url'] = f"/{encoded_path}"
+        book['read_url'] = '/' + quote(book['book_path'], safe='/')
+        book['img_url'] = '/' + quote(book['img_src'], safe='/')
         book['slug'] = make_slug(book['book_path'])
 
     env = Environment(
@@ -26,8 +33,8 @@ def render_books_page(books_file='meta_data.json', template_name='base.html', bo
         autoescape=select_autoescape(['html', 'xml'])
     )
 
+    total_pages = math.ceil(len(books) / books_per_page)
     chunks = list(chunked(books, books_per_page))
-    total_pages = len(chunks)
 
     if not os.path.exists('pages'):
         os.makedirs('pages')
@@ -38,9 +45,11 @@ def render_books_page(books_file='meta_data.json', template_name='base.html', bo
 
     for i, page_books in enumerate(chunks):
         page_number = i + 1
-        
+        left_column, right_column = split_columns(page_books)
+
         rendered_page = template.render(
-            books=page_books,
+            left_column=left_column,
+            right_column=right_column,
             current_page=page_number,
             total_pages=total_pages,
             page_numbers=page_numbers,
