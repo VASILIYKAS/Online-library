@@ -19,7 +19,7 @@ def split_columns(books):
     return books[:half], books[half:]
 
 
-def render_books_page(books_file='meta_data.json', template_name='base.html', books_per_page=10):
+def render_books_page(books_file='meta_data.json', template_name='base.html', books_per_page=8):
     with open(books_file, 'r', encoding='utf-8') as file:
         books = json.load(file)
 
@@ -27,6 +27,7 @@ def render_books_page(books_file='meta_data.json', template_name='base.html', bo
         book['read_url'] = '/' + quote(book['book_path'], safe='/')
         book['img_url'] = '/' + quote(book['img_src'], safe='/')
         book['slug'] = make_slug(book['book_path'])
+        book['genres'] = [g.strip('.') for g in book['genres'].split(',')]
 
     env = Environment(
         loader=FileSystemLoader('.'),
