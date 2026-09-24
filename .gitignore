@@ -28,5 +28,4 @@ Thumbs.db
 .env.*
 
 # Сгенерированные файлы
-index.html
 pages/
