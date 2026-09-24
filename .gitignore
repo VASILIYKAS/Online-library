@@ -26,6 +26,3 @@ Thumbs.db
 !package.json
 .env
 .env.*
-
-# Сгенерированные файлы
-pages/
