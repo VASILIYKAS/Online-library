@@ -1,6 +1,7 @@
 import json
 import math
 import os
+import shutil
 from urllib.parse import quote
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -86,11 +87,13 @@ def build_site(books_file='meta_data.json', books_per_page=8):
             book['page'] = page_number
 
         html = render_books_page(books_template, page_books, page_number, total_pages)
-        save_page(html, f'pages/index{page_number}.html')
+        save_page(html, f'docs/index{page_number}.html')
 
     for book in books:
         html = render_book_page(book_template, book)
-        save_page(html, f"pages/{book['slug']}.html")
+        save_page(html, f"docs/{book['slug']}.html")
+
+    shutil.copyfile('docs/index1.html', 'docs/index.html')
 
 
 def main():
