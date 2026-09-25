@@ -108,7 +108,7 @@ def main():
     server.watch('book.html', on_reload)
 
     try:
-        server.serve(port=5500, root='.')
+        server.serve(port=5500, root='docs')
     except KeyboardInterrupt:
         server.server_close()
 
