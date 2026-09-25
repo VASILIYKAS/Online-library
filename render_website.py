@@ -20,8 +20,8 @@ def make_slug(book_path):
 
 
 def encode_book(book):
-    book['read_url'] = + quote(book['book_path'], safe='/')
-    book['img_url'] = + quote(book['img_src'], safe='/')
+    book['read_url'] = quote(book['book_path'], safe='/')
+    book['img_url'] = quote(book['img_src'], safe='/')
     book['slug'] = make_slug(book['book_path'])
     book['genres'] = [g.strip('.') for g in book['genres'].split(',')]
     return book
