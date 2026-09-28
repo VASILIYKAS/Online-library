@@ -22,7 +22,6 @@ env/
 Thumbs.db
 
 # Секреты и данные
-*.json
 !package.json
 .env
 .env.*
