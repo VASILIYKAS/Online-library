@@ -59,6 +59,7 @@ copy .env.example .env
    OUTPUT_DIR=pages
    BOOKS_PER_PAGE=8
    PORT=5500
+   PUBLISH_DOCS=Fals
 ```
 
 ### Доступные переменные
@@ -67,6 +68,7 @@ copy .env.example .env
 - `OUTPUT_DIR` - Папка, куда генерируются html-страницы. По умолчанию: `pages`
 - `BOOKS_PER_PAGE` - Сколько книг выводить на одной странице. По умолчанию: `8`
 - `PORT` - Порт локального сервера для предпросмотра. По умолчанию: `5500`
+- `PUBLISH_DOCS` - Флаг чтобы собрать самодостаточную папку `docs/` для GitHub Pages. По умолчанию `False`
 
 
 ## Данные

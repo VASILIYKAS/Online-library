@@ -2,6 +2,7 @@ import json
 import math
 from dotenv import load_dotenv
 import os
+import shutil
 from urllib.parse import quote
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -15,6 +16,7 @@ BOOKS_FILE = os.getenv('BOOKS_FILE', default='meta_data.json')
 OUTPUT_DIR = os.getenv('OUTPUT_DIR', default='pages')
 BOOKS_PER_PAGE = int(os.getenv('BOOKS_PER_PAGE', default='8'))
 PORT = int(os.getenv('PORT', default='5500'))
+PUBLISH_DOCS = os.getenv('PUBLISH_DOCS', default='').lower() in ('1', 'true', 'yes')
 
 
 def load_books(books_file=BOOKS_FILE):
@@ -79,7 +81,7 @@ def save_page(html, path):
         file.write(html)
 
 
-def build_site(books_file=BOOKS_FILE, books_per_page=BOOKS_PER_PAGE):
+def build_site(books_file=BOOKS_FILE, books_per_page=BOOKS_PER_PAGE, publish=False):
     books = [encode_book(book) for book in load_books(books_file)]
 
     env = make_env()
@@ -100,13 +102,30 @@ def build_site(books_file=BOOKS_FILE, books_per_page=BOOKS_PER_PAGE):
         html = render_book_page(book_template, book)
         save_page(html, f"{OUTPUT_DIR}/{book['slug']}.html")
 
+    if publish:
+        publish_to_docs()
+
+
+def publish_to_docs(output_dir=OUTPUT_DIR, docs_dir='docs'):
+    if os.path.exists(docs_dir):
+        shutil.rmtree(docs_dir)
+
+    shutil.copytree(output_dir, docs_dir)
+    shutil.copytree('media', os.path.join(docs_dir, 'media'))
+    shutil.copytree('static', os.path.join(docs_dir, 'static'))
+
+    shutil.copyfile(
+            os.path.join(docs_dir, 'index1.html'),
+            os.path.join(docs_dir, 'index.html'),
+        )
+
 
 def on_reload():
     build_site()
 
 
 def main():
-    build_site()
+    build_site(publish=PUBLISH_DOCS)
     server = Server()
 
     server.watch('templates/base.html', on_reload)
