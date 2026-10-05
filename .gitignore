@@ -24,7 +24,6 @@ Thumbs.db
 # Секреты и данные
 !package.json
 .env
-.env.*
 
 # Сгенерированные файлы
 pages/

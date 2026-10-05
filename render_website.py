@@ -1,5 +1,6 @@
 import json
 import math
+from dotenv import load_dotenv
 import os
 from urllib.parse import quote
 
@@ -8,7 +9,15 @@ from livereload import Server
 from more_itertools import chunked
 
 
-def load_books(books_file='meta_data.json'):
+load_dotenv()
+
+BOOKS_FILE = os.getenv('BOOKS_FILE', default='meta_data.json')
+OUTPUT_DIR = os.getenv('OUTPUT_DIR', default='pages')
+BOOKS_PER_PAGE = int(os.getenv('BOOKS_PER_PAGE', default='8'))
+PORT = int(os.getenv('PORT', default='5500'))
+
+
+def load_books(books_file=BOOKS_FILE):
     with open(books_file, 'r', encoding='utf-8') as file:
         return json.load(file)
 
@@ -21,7 +30,7 @@ def make_slug(book_path):
 def encode_book(book):
     book['book_path'] = os.path.join('media', 'books', os.path.basename(book['book_path']))
     book['img_src']   = os.path.join('media', 'img', os.path.basename(book['img_src']))
-    book['img_url'] = quote(book['img_src'], safe='/')
+    book['img_url'] = '/' + quote(book['img_src'], safe='/')
     book['slug'] = make_slug(book['book_path'])
     book['genres'] = [g.strip('.') for g in book['genres'].split(',')]
     return book
@@ -71,7 +80,7 @@ def save_page(html, path):
         file.write(html)
 
 
-def build_site(books_file='meta_data.json', books_per_page=8):
+def build_site(books_file=BOOKS_FILE, books_per_page=BOOKS_PER_PAGE):
     books = [encode_book(book) for book in load_books(books_file)]
 
     env = make_env()
@@ -87,11 +96,11 @@ def build_site(books_file='meta_data.json', books_per_page=8):
             book['page'] = page_number
 
         html = render_books_page(books_template, page_books, page_number, total_pages)
-        save_page(html, f'pages/index{page_number}.html')
+        save_page(html, f'{OUTPUT_DIR}/index{page_number}.html')
 
     for book in books:
         html = render_book_page(book_template, book)
-        save_page(html, f"pages/{book['slug']}.html")
+        save_page(html, f"{OUTPUT_DIR}/{book['slug']}.html")
 
 
 def main():
@@ -106,7 +115,7 @@ def main():
     server.watch('templates/book.html', on_reload)
 
     try:
-        server.serve(port=5500, root='docs')
+        server.serve(port=PORT, root='.')
     except KeyboardInterrupt:
         server.server_close()
 
