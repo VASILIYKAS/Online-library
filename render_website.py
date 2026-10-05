@@ -90,8 +90,7 @@ def build_site(books_file=BOOKS_FILE, books_per_page=BOOKS_PER_PAGE):
     total_pages = math.ceil(len(books) / books_per_page)
     chunks = list(chunked(books, books_per_page))
 
-    for i, page_books in enumerate(chunks):
-        page_number = i + 1
+    for page_number, page_books in enumerate(chunks, start=1):
         for book in page_books:
             book['page'] = page_number
 
