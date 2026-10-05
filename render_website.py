@@ -1,7 +1,6 @@
 import json
 import math
 import os
-import shutil
 from urllib.parse import quote
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -20,7 +19,8 @@ def make_slug(book_path):
 
 
 def encode_book(book):
-    book['read_url'] = quote(book['book_path'], safe='/')
+    book['book_path'] = os.path.join('media', 'books', os.path.basename(book['book_path']))
+    book['img_src']   = os.path.join('media', 'img', os.path.basename(book['img_src']))
     book['img_url'] = quote(book['img_src'], safe='/')
     book['slug'] = make_slug(book['book_path'])
     book['genres'] = [g.strip('.') for g in book['genres'].split(',')]
@@ -29,7 +29,7 @@ def encode_book(book):
 
 def make_env():
     return Environment(
-        loader=FileSystemLoader('.'),
+        loader=FileSystemLoader('templates'),
         autoescape=select_autoescape(['html', 'xml'])
     )
 
@@ -87,13 +87,11 @@ def build_site(books_file='meta_data.json', books_per_page=8):
             book['page'] = page_number
 
         html = render_books_page(books_template, page_books, page_number, total_pages)
-        save_page(html, f'docs/index{page_number}.html')
+        save_page(html, f'pages/index{page_number}.html')
 
     for book in books:
         html = render_book_page(book_template, book)
-        save_page(html, f"docs/{book['slug']}.html")
-
-    shutil.copyfile('docs/index1.html', 'docs/index.html')
+        save_page(html, f"pages/{book['slug']}.html")
 
 
 def main():
@@ -104,8 +102,8 @@ def main():
     def on_reload():
         build_site()
 
-    server.watch('base.html', on_reload)
-    server.watch('book.html', on_reload)
+    server.watch('templates/base.html', on_reload)
+    server.watch('templates/book.html', on_reload)
 
     try:
         server.serve(port=5500, root='docs')
