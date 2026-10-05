@@ -102,13 +102,13 @@ def build_site(books_file=BOOKS_FILE, books_per_page=BOOKS_PER_PAGE):
         save_page(html, f"{OUTPUT_DIR}/{book['slug']}.html")
 
 
-def main():
+def on_reload():
     build_site()
 
-    server = Server()
 
-    def on_reload():
-        build_site()
+def main():
+    build_site()
+    server = Server()
 
     server.watch('templates/base.html', on_reload)
     server.watch('templates/book.html', on_reload)
