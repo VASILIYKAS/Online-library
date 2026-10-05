@@ -64,8 +64,7 @@ def render_books_page(template, page_books, page_number, total_pages):
     left_column, right_column = split_columns(page_books)
     
     return template.render(
-        left_column=left_column,
-        right_column=right_column,
+        columns=[left_column, right_column],
         current_page=page_number,
         total_pages=total_pages,
         page_numbers=page_numbers,

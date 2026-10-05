@@ -82,54 +82,32 @@
     </nav>
     <div class="container mt-4">
       <div class="row">
-        <div class="col-md-6">
-          {% for book in left_column %}
-          <div class="card mb-3" style="max-width: 540px;">
-            <div class="row no-gutters">
-              <div class="col-md-4">
-                <img src="{{book.img_url}}" class="card-img" alt="{{book.title}}">
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <div class="card-title h5">{{book.title}}</div>
-                  <p class="card-text">{{book.author}}</p>
-                    <div class="d-flex flex-wrap mb-2">
-                      {% for genre in book.genres %}
-                        <span class="align-top badge badge-secondary mr-1 mb-1">{{ genre }}</span>
-                      {% endfor %}
+        {% for column in columns %}
+          <div class="col-md-6">
+            {% for book in column %}
+              <div class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                  <div class="col-md-4">
+                    <img src="{{book.img_url}}" class="card-img" alt="{{book.title}}">
+                  </div>
+                  <div class="col-md-8">
+                    <div class="card-body">
+                      <div class="card-title h5">{{book.title}}</div>
+                      <p class="card-text">{{book.author}}</p>
+                      <div class="d-flex flex-wrap mb-2">
+                        {% for genre in book.genres %}
+                          <span class="align-top badge badge-secondary mr-1 mb-1">{{ genre }}</span>
+                        {% endfor %}
+                      </div>
+                      <a href="{{ book.slug }}.html" target="_blank">Читать</a>
+                      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                     </div>
-                  <a href="{{ book.slug }}.html" target="_blank">Читать</a>
-                  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                  </div>
                 </div>
               </div>
-            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
-        <div class="col-md-6">
-          {% for book in right_column %}
-          <div class="card mb-3" style="max-width: 540px;">
-            <div class="row no-gutters">
-              <div class="col-md-4">
-                <img src="{{book.img_url}}" class="card-img" alt="{{book.title}}">
-              </div>
-              <div class="col-md-8">
-                <div class="card-body">
-                  <div class="card-title h5">{{book.title}}</div>
-                  <p class="card-text">{{book.author}}</p>
-                    <div class="d-flex flex-wrap mb-2">
-                      {% for genre in book.genres %}
-                        <span class="align-middle badge badge-secondary mr-1 mb-1">{{ genre }}</span>
-                      {% endfor %}
-                    </div>
-                  <a href="{{ book.slug }}.html" target="_blank">Читать</a>
-                  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
+        {% endfor %}
       </div>
     </div>
 
