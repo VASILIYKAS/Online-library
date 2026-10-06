@@ -7,7 +7,7 @@
 
 Ссылка на сайт: https://vasiliykas.github.io/Online-library/
 
-![Гифка сайта](img/online_library.gif)
+![Гифка сайта](media/img/online_library.gif)
 
 
 ## Оглавление
