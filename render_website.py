@@ -30,9 +30,9 @@ def make_slug(book_path):
 
 
 def encode_book(book):
-    book['book_path'] = os.path.join('media', 'books', os.path.basename(book['book_path']))
-    book['img_src']   = os.path.join('media', 'img', os.path.basename(book['img_src']))
-    book['img_url'] = '/' + quote(book['img_src'], safe='/')
+    book['book_path'] = f"media/books/{os.path.basename(book['book_path'])}"
+    book['img_src'] = f"media/img/{os.path.basename(book['img_src'])}"
+    book['img_url'] = quote(book['img_src'], safe='/')
     book['slug'] = make_slug(book['book_path'])
     book['genres'] = [g.strip('.') for g in book['genres'].split(',')]
     return book
@@ -110,14 +110,17 @@ def publish_to_docs(output_dir=OUTPUT_DIR, docs_dir='docs'):
     if os.path.exists(docs_dir):
         shutil.rmtree(docs_dir)
 
-    shutil.copytree(output_dir, docs_dir)
+    shutil.copytree(output_dir, os.path.join(docs_dir, 'pages'))
     shutil.copytree('media', os.path.join(docs_dir, 'media'))
     shutil.copytree('static', os.path.join(docs_dir, 'static'))
 
-    shutil.copyfile(
-            os.path.join(docs_dir, 'index1.html'),
-            os.path.join(docs_dir, 'index.html'),
-        )
+    redirect_page = (
+        '<!doctype html><meta charset="utf-8">'
+        '<meta http-equiv="refresh" content="0; url=pages/index1.html">'
+        '<a href="pages/index1.html">Перейти в библиотеку</a>'
+    )
+    with open(os.path.join(docs_dir, 'index.html'), 'w', encoding='utf-8') as file:
+        file.write(redirect_page)
 
 
 def on_reload():
